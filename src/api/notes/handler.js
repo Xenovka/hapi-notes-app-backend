@@ -1,6 +1,7 @@
 class NotesHandler {
-    constructor(service) {
+    constructor(service, validator) {
         this._service = service;
+        this._validator = validator;
 
         this.postNoteHandler = this.postNoteHandler.bind(this);
         this.getNotesHandler = this.getNotesHandler.bind(this);
@@ -13,6 +14,8 @@ class NotesHandler {
         const { title = "untitled", body, tags } = request.payload;
 
         try {
+            this._validator.validateNotePayload(request.payload);
+
             const noteId = this._service.addNote({ title, body, tags });
 
             const response = h.response({
@@ -57,7 +60,7 @@ class NotesHandler {
             };
         } catch (error) {
             const response = h.response({
-                status: "failed",
+                status: "fail",
                 message: error.message
             });
             response.code(404);
@@ -67,6 +70,8 @@ class NotesHandler {
 
     putNoteByIdHandler(request, h) {
         try {
+            this._validator.validateNotePayload(request.payload);
+
             const { id } = request.params;
 
             this._service.editNoteById(id, request.payload);
@@ -77,10 +82,10 @@ class NotesHandler {
             };
         } catch (error) {
             const response = h.response({
-                status: "failed",
+                status: "fail",
                 message: error.message
             });
-            response.code(404);
+            response.code(400);
             return response;
         }
     }
@@ -97,7 +102,7 @@ class NotesHandler {
             };
         } catch (error) {
             const response = h.response({
-                status: "failed",
+                status: "fail",
                 message: error.message
             });
             response.code(404);
