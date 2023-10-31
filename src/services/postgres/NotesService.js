@@ -1,10 +1,10 @@
 const { nanoid } = require("nanoid");
 const { Pool } = require("pg");
-const InvariantError = require("../../../exceptions/InvariantError");
-const { mapDBToModel } = require("../../../utils");
-const NotFoundError = require("../../../exceptions/NotFoundError");
+const InvariantError = require("../../exceptions/InvariantError");
+const { mapDBToModel } = require("../../utils");
+const NotFoundError = require("../../exceptions/NotFoundError");
 
-class NoteService {
+class NotesService {
     cosntructor() {
         this._pool = new Pool();
     }
@@ -34,7 +34,7 @@ class NoteService {
         return result.rows.map(mapDBToModel);
     }
 
-    async getNotesById(id) {
+    async getNoteById(id) {
         const query = {
             text: "SELECT * FROM notes WHERE id = $1",
             values: [id]
@@ -75,4 +75,4 @@ class NoteService {
     }
 }
 
-module.exports = NoteService;
+module.exports = NotesService;
